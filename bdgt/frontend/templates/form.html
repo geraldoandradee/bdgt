@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+  {% from "_macros.html" import render_form with context %}
+
+  <div class="well">
+    <h2>{{ form_title }}</h2>
+    <div class="form-group">
+      {{ render_form(form) }}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
