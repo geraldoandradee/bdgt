@@ -24,6 +24,9 @@
                            filename='libs/bootstrap-material-design/dist/css/material-wfont.css') }}">
     <link rel="stylesheet"
           href="{{ url_for('static', filename='libs/slick.js/slick/slick.css') }}">
+
+    {% block css %}
+    {% endblock %}
   </head>
 
   <body>
@@ -49,6 +52,9 @@
           <ul class="nav navbar-nav">
             <li>
               <a href="{{ url_for('accounts.index') }}">Accounts</a>
+            </li>
+            <li>
+              <a href="{{ url_for('categories.index') }}">Categories</a>
             </li>
             <li>
               <a href="{{ url_for('imports.form') }}">Import</a>

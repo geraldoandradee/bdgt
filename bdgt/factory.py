@@ -70,10 +70,12 @@ def create_app(settings=None):
 
     # Register blueprints
     from bdgt.frontend.accounts.views import bp as accounts_bp
+    from bdgt.frontend.categories.views import bp as categories_bp
     from bdgt.frontend.dashboard.views import bp as dashboard_bp
     from bdgt.frontend.imports.views import bp as imports_bp
     from bdgt.frontend.transactions.views import bp as transactions_bp
     app.register_blueprint(accounts_bp)
+    app.register_blueprint(categories_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(imports_bp)
     app.register_blueprint(transactions_bp)

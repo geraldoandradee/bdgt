@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% macro render_category(category, level) -%}
+<tr>
+  <td style="vertical-align: middle;">
+    <span style="margin-left: {{ level * 16 }}px;">
+      {{ category.name }}
+    </span>
+  </td>
+  <td>
+    <div class="btn-group pull-right">
+      <a class="btn btn-default btn-flat confirm"
+         href="{{ url_for('categories.create_or_update', id=category.id) }}">
+        <span class="glyphicon glyphicon-pencil"></span>
+      </a>
+      <a class="btn btn-default btn-flat confirm"
+         href="{{ url_for('categories.delete', id=category.id) }}">
+        <span class="glyphicon glyphicon-trash"></span>
+      </a>
+    </div>
+  </td>
+</tr>
+{% if category.subcategories | length > 0 %}
+  {% for subcategory in category.subcategories %}
+    {{ render_category(subcategory, level + 1) }}
+  {% endfor %}
+{% endif %}
+{%- endmacro %}
+
+{% block content %}
+
+<a class="btn btn-primary" href="{{ url_for('categories.create_or_update') }}">
+  New Category
+</a>
+
+<div class="panel panel-default">
+  <div class="panel-heading">Categories</div>
+  <table id="categories" class="table">
+    {% if categories | length > 0 %}
+    <tbody>
+      {% for category in categories %}
+        {{ render_category(category, 0) }}
+      {% endfor %}
+    </tbody>
+    {% else %}
+      <p>No categories</p>
+    {% endif %}
+  </table>
+</div>
+{% endblock %}
+
+{% block js %}
+{% endblock %}
