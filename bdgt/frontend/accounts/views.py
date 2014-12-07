@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, redirect, render_template, url_for
+from flask import Blueprint, g, redirect, render_template, url_for
 
 from bdgt import db
 from bdgt.domain.models import Account
@@ -29,3 +29,8 @@ def new():
         return redirect(url_for('accounts.index'))
     return render_template('form.html', form=form, form_title="Add Account",
                            action_url=url_for('accounts.index'))
+
+
+@bp.before_request
+def before_request():
+    g.section = 'accounts'

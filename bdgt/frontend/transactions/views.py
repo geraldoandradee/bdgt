@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, g, render_template, request
 
 from bdgt.domain.models import Account, Transaction
 
@@ -22,3 +22,8 @@ def list():
     txs = txs_query.all()
 
     return render_template("transactions/index.html", txs=txs)
+
+
+@bp.before_request
+def before_request():
+    g.section = 'transactions'

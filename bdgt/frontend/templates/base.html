@@ -20,7 +20,6 @@
   </head>
 
   <body>
-
     <nav class="navbar navbar-default" role="navigation">
       <div class="container-fluid">
         <!-- Navbar header -->
@@ -40,16 +39,16 @@
         </div>
         <div class="collapse navbar-collapse" id="main_menu">
           <ul class="nav navbar-nav">
-            <li>
+            <li class="{{ 'active' if g.section == 'accounts' }}">
               <a href="{{ url_for('accounts.index') }}">Accounts</a>
             </li>
-            <li>
+            <li class="{{ 'active' if g.section == 'transactions' }}">
               <a href="{{ url_for('transactions.list') }}">Transactions</a>
             </li>
-            <li>
+            <li class="{{ 'active' if g.section == 'categories' }}">
               <a href="{{ url_for('categories.index') }}">Categories</a>
             </li>
-            <li>
+            <li class="{{ 'active' if g.section == 'imports' }}">
               <a href="{{ url_for('imports.form') }}">Import</a>
             </li>
           </ul>

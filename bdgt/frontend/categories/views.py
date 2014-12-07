@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, redirect, render_template, url_for
+from flask import Blueprint, g, redirect, render_template, url_for
 
 
 from bdgt import db
@@ -45,3 +45,8 @@ def delete(id):
     db.session.delete(category)
     db.session.commit()
     return redirect(url_for('categories.index'))
+
+
+@bp.before_request
+def before_request():
+    g.section = 'categories'

@@ -1,7 +1,8 @@
 import logging
 import os
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import (Blueprint, flash, g, redirect, render_template, request,
+                   url_for)
 from werkzeug.utils import secure_filename
 
 from bdgt.domain.imports import import_transactions
@@ -32,6 +33,11 @@ def form():
                            form_title="Import Transactions",
                            action_url=url_for('imports.form'),
                            enctype='multipart/form-data')
+
+
+@bp.before_request
+def before_request():
+    g.section = 'imports'
 
 
 @bp.errorhandler(Exception)
