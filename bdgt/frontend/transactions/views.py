@@ -1,17 +1,24 @@
 import logging
 
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 
-from bdgt.domain.models import Account
+from bdgt.domain.models import Account, Transaction
 
 
 _log = logging.getLogger(__name__)
 
-bp = Blueprint('txs', __name__, url_prefix='/transactions')
+bp = Blueprint('transactions', __name__, url_prefix='/transactions')
 
 
-@bp.route("/<account_name>", methods=['GET'])
-def index(account_name):
-    account = Account.query.filter_by(name=account_name).one()
+@bp.route("/", methods=['GET'])
+def list():
+    account_number = request.args.get('account', None)
+    if account_number:
+        txs_query = Transaction.query.join(Account).filter(
+            Account.number == account_number)
+    else:
+        txs_query = Transaction.query
 
-    return render_template("transactions/index.html", txs=account.transactions)
+    txs = txs_query.all()
+
+    return render_template("transactions/index.html", txs=txs)

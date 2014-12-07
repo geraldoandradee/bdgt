@@ -13,12 +13,14 @@
           {% for account in accounts %}
           <tr>
             <td>
-              <a href="{{ url_for('txs.index', account_name=account.name) }}">
+              <a href="{{ url_for('transactions.list',
+                                  account=account.name) }}">
                 {{ account.name }}
               </a>
             </td>
             <td>
-              <a href="{{ url_for('txs.index', account_name=account.name) }}">
+              <a href="{{ url_for('transactions.list',
+                                  account=account.name) }}">
                 {{ account.number }}
               </a>
             </td>
