@@ -2,10 +2,48 @@
 
 {% block content %}
 
+<div class="input-group">
+  <div class="input-group-btn">
+    <button type="button" class="btn btn-default dropdown-toggle"
+            data-toggle="dropdown" aria-expanded="false">
+      Filter <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li>
+        <a href="{{ url_for('transactions.list', q=q + ' amount:>0') }}">
+          Positive Amount
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('transactions.list', q=q + ' amount:<0') }}">
+          Negative Amount
+        </a>
+      </li>
+      <li class="divider"></li>
+      <li>
+        <a href="{{ url_for('transactions.list', q=q + ' is:reconciled') }}">
+          Is Reconciled
+        </a>
+      </li>
+      <li>
+        <a href="{{ url_for('transactions.list', q=q + ' not:reconciled') }}">
+          Not Reconciled
+        </a>
+      </li>
+    </ul>
+  </div>
+  <form action="{{ url_for('transactions.list') }}" method='GET'>
+    <input name="q" class="form-control" type="text" value='{{ q if q }}'>
+  </form>
+</div>
+
+<br>
+
 <table id="accounts" class="table table-bordered table-condensed">
     {% if txs | length > 0 %}
     <thead>
       <tr>
+        <th>Account</th>
         <th>Date</th>
         <th>Description</th>
         <th>Amount</th>
@@ -16,6 +54,7 @@
     <tbody>
         {% for tx in txs %}
         <tr>
+          <td>{{ tx.account.name }}</td>
           <td>{{ tx.date }}</td>
           <td>{{ tx.description }}</td>
           {% if tx.amount > 0 %}

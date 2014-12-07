@@ -26,7 +26,7 @@ def form():
         # Import the transactions
         imported_txs = import_transactions(filename, form.file_type.data)
 
-        flash("Imported {} transactions".format(len(imported_txs)))
+        flash("Imported {} transactions".format(len(imported_txs)), 'success')
 
         return redirect(url_for('dashboard.index'))
     return render_template('form.html', form=form,

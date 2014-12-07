@@ -8,3 +8,4 @@ DEBUG_TB_INTERCEPT_REDIRECTS = False
 
 # Flask-SqlAlchemy
 SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/bdgt.db'
+SQLALCHEMY_ECHO = True
