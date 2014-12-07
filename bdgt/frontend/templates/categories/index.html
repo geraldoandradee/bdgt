@@ -36,20 +36,17 @@
 <br>
 <br>
 
-<div class="panel panel-default">
-  <div class="panel-heading">Categories</div>
-  <table id="categories" class="table table-condensed">
-    {% if categories | length > 0 %}
-    <tbody>
-      {% for category in categories %}
-        {{ render_category(category, 0) }}
-      {% endfor %}
-    </tbody>
-    {% else %}
-      <p>No categories</p>
-    {% endif %}
-  </table>
-</div>
+<table id="categories" class="table table-condensed">
+  {% if categories | length > 0 %}
+  <tbody>
+    {% for category in categories %}
+      {{ render_category(category, 0) }}
+    {% endfor %}
+  </tbody>
+  {% else %}
+    <p>No categories</p>
+  {% endif %}
+</table>
 {% endblock %}
 
 {% block js %}
