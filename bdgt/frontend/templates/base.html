@@ -15,16 +15,6 @@
           href="{{ url_for('static',
                            filename='css/site.css') }}">
 
-    <link rel="stylesheet"
-          href="{{ url_for('static',
-                           filename='libs/bootstrap-material-design/dist/css/ripples.min.css') }}">
-
-    <link rel="stylesheet"
-          href="{{ url_for('static',
-                           filename='libs/bootstrap-material-design/dist/css/material-wfont.css') }}">
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='libs/slick.js/slick/slick.css') }}">
-
     {% block css %}
     {% endblock %}
   </head>
@@ -89,19 +79,6 @@
     </script>
     <script src="{{ url_for('static',
                             filename='libs/bootstrap/dist/js/bootstrap.min.js') }}">
-    </script>
-    <script src="{{ url_for('static',
-                           filename='libs/bootstrap-material-design/dist/js/ripples.min.js') }}">
-    </script>
-    <script src="{{ url_for('static',
-                           filename='libs/bootstrap-material-design/dist/js/material.min.js') }}">
-    </script>
-    <script src="{{ url_for('static', filename='libs/slick.js/slick/slick.min.js') }}">
-    </script>
-    <script>
-      $(document).ready(function() {
-        $.material.init();
-      });
     </script>
 
     {% block js %}
