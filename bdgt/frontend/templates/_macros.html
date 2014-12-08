@@ -109,6 +109,22 @@ Renders date field
 {%- endmacro %}
 
 {#
+Renders file field
+#}
+{% macro render_file_field(field) -%}
+  <div id="file_div" class="form-group">
+    <div class="input-group">
+      <span class="input-group-btn">
+        <span class="btn btn-primary btn-file">
+          Browse&hellip; {{ field(class='form-control', id=field.id, **kwargs) }}
+        </span>
+      </span>
+      <input type="text" class="form-control" disabled>
+    </div>
+  </div>
+{%- endmacro %}
+
+{#
 Renders WTForm in bootstrap way. There are two ways to call function:
   - as macros: it will render all field forms using cycle to iterate over
                them
@@ -148,7 +164,8 @@ Params:
           {{ f }}
         {% elif f.type == 'DateField' or
                 f.type == 'DateTimeField' %}
-          {{ render_date_field(f) }}
+        {% elif f.type == 'FileField' %}
+          {{ render_file_field(f) }}
         {% else %}
           {{ render_field(f) }}
         {% endif %}
