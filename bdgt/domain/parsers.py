@@ -31,7 +31,7 @@ class Mt940Parser(object):
         mt940 = MT940(file_type)
         p_txs = []
         for f_stmt in mt940.statements:
-            account_number = f_stmt.account
+            account_number = f_stmt.account.replace(' ', '')
             for f_tx in f_stmt.transactions:
                 p_tx = ParsedTransaction(f_tx.booking, f_tx.amount,
                                          unicode(account_number),
@@ -64,9 +64,10 @@ class OfxParser(object):
             p_txs = []
             for f_acc in ofx.accounts:
                 for f_tx in f_acc.statement.transactions:
-                    p_tx = ParsedTransaction(f_tx.date.date(), f_tx.amount,
-                                             unicode(f_acc.number),
-                                             unicode(f_tx.memo))
+                    p_tx = ParsedTransaction(
+                        f_tx.date.date(), f_tx.amount,
+                        unicode(f_acc.number).replace(' ', ''),
+                        unicode(f_tx.memo))
                     p_txs.append(p_tx)
             return p_txs
         finally:
@@ -99,7 +100,7 @@ class CsvIngParser(object):
                 if tx['Af Bij'] == 'Af':
                     tx_amount = -tx_amount
 
-                tx_account = unicode(tx['Rekening'])
+                tx_account = unicode(tx['Rekening']).replace(' ', '')
                 tx_description = unicode(tx['Naam / Omschrijving'])
                 tx_description += '\n' + unicode(tx['Mededelingen'])
 

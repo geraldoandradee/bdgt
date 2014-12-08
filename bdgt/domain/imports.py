@@ -24,6 +24,7 @@ def import_transactions(filename, file_type):
     # Add them to the database with the imported field set to False
     txs = []
     for p_tx in p_txs:
+        print p_tx
         try:
             account = Account.query.filter_by(number=p_tx.account).one()
         except NoResultFound:

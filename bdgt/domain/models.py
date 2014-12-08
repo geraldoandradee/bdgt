@@ -1,4 +1,4 @@
-from sqlalchemy.orm import backref
+from sqlalchemy.orm import backref, validates
 
 from bdgt import db
 
@@ -15,6 +15,12 @@ class Account(db.Model):
     def __init__(self, name, number):
         self.name = name
         self.number = number
+
+    @validates('number')
+    def validate_number(self, key, number):
+        if ' ' in number:
+            raise ValueError("Account number cannot contain spaces")
+        return number
 
 
 class Category(db.Model):
