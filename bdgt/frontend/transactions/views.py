@@ -68,7 +68,10 @@ def list():
     page = int(request.args.get('page', 1))
     tx_pages = query.paginate(page, 20)
 
-    return render_template("transactions/index.html", tx_pages=tx_pages, q=q)
+    categories = Category.query.all()
+
+    return render_template("transactions/index.html", tx_pages=tx_pages, q=q,
+                           categories=categories)
 
 
 @bp.before_request
