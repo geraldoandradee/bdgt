@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, flash, g, render_template, request
+from flask import Blueprint, flash, g, render_template, request, url_for
 from sqlalchemy.sql.expression import not_
 
 from bdgt.domain.models import Account, Category, Transaction
@@ -64,11 +64,19 @@ def list():
                     flash("{} is not a valid filter".format(f), 'warning')
             else:
                 query = query.filter(Transaction.description.contains(f))
-    txs = query.all()
 
-    return render_template("transactions/index.html", txs=txs, q=q)
+    page = int(request.args.get('page', 1))
+    tx_pages = query.paginate(page, 20)
+
+    return render_template("transactions/index.html", tx_pages=tx_pages, q=q)
 
 
 @bp.before_request
 def before_request():
     g.section = 'transactions'
+
+
+def url_for_page(page):
+    args = request.args.copy()
+    args['page'] = page
+    return url_for(request.endpoint, **args)

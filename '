@@ -76,56 +76,55 @@
     {% endif %}
 </table>
 
-<nav class="text-center">
-  {% if tx_pages.total %}
-    <ul class="pagination" style="margin-top: 0">
-      {% if tx_pages.has_prev %}
-        <li>
-          <a href="{{ url_for_page(tx_pages.page - 1) }}">
-            <span aria-hidden="true">&laquo;</span>
-            <span class="sr-only">Previous</span>
-          </a>
-        </li>
-      {% else %}
-        <li class="disabled">
-          <a>
-            <span aria-hidden="true">&laquo;</span>
-            <span class="sr-only">Previous</span>
-          </a>
-        </li>
-      {% endif %}
+{# Page links #}
+<nav>
+  <ul class="pagination">
+    {% if tx_pages.has_prev %}
+      <li>
+        <a href="{{ url_for_page(tx_pages.page - 1) }}">
+          <span aria-hidden="true">&laquo;</span>
+          <span class="sr-only">Previous</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="disabled">
+        <a>
+          <span aria-hidden="true">&laquo;</span>
+          <span class="sr-only">Previous</span>
+        </a>
+      </li>
+    {% endif %}
 
-      {%- for page in tx_pages.iter_pages() %}
-        {% if page %}
-          {% if page != tx_pages.page %}
-            <li>
-              <a href="{{ url_for_page(page) }}">{{ page }}</a>
-            </li>
-          {% else %}
-          <li class="active">
+    {%- for page in tx_pages.iter_pages() %}
+      {% if page %}
+        {% if page != tx_pages.page %}
+          <li>
             <a href="{{ url_for_page(page) }}">{{ page }}</a>
           </li>
-          {% endif %}
+        {% else %}
+        <li class="active">
+          <a href="{{ url_for_page(page) }}">{{ page }}</a>
+        </li>
         {% endif %}
-      {%- endfor %}
-
-      {% if tx_pages.has_next %}
-        <li>
-          <a href="{{ url_for_page(tx_pages.page + 1) }}">
-            <span aria-hidden="true">&raquo;</span>
-            <span class="sr-only">Next</span>
-          </a>
-        </li>
-      {% else %}
-        <li class="disabled">
-          <a>
-            <span aria-hidden="true">&raquo;</span>
-            <span class="sr-only">Next</span>
-          </a>
-        </li>
       {% endif %}
-    </ul>
-  {% endif %}
+    {%- endfor %}
+
+    {% if tx_pages.has_next %}
+      <li>
+        <a href="{{ url_for_page(tx_pages.page + 1) }}">
+          <span aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Next</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="disabled">
+        <a>
+          <span aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Next</span>
+        </a>
+      </li>
+    {% endif %}
+  </ul>
 </nav>
 
 

@@ -80,6 +80,10 @@ def create_app(settings=None):
     app.register_blueprint(imports_bp)
     app.register_blueprint(transactions_bp)
 
+    # Jinja functions
+    from bdgt.frontend.transactions.views import url_for_page
+    app.jinja_env.globals['url_for_page'] = url_for_page
+
     # Create database tables
     with app.app_context():
         db.create_all()
