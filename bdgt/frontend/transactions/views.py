@@ -3,6 +3,7 @@ import logging
 from flask import Blueprint, flash, g, render_template, request, url_for
 from sqlalchemy.sql.expression import not_
 
+from bdgt import db
 from bdgt.domain.models import Account, Category, Transaction
 
 
@@ -68,10 +69,37 @@ def list():
     page = int(request.args.get('page', 1))
     tx_pages = query.paginate(page, 20)
 
-    categories = Category.query.all()
+    root_categories = Category.query.filter_by(parent_id=None).all()
 
     return render_template("transactions/index.html", tx_pages=tx_pages, q=q,
-                           categories=categories)
+                           categories=root_categories)
+
+
+@bp.route("/set_category", methods=['POST'])
+def set_category():
+    cat_id = request.json.get('cat_id')
+    tx_ids = request.json.get('tx_ids')
+
+    category = Category.query.get(cat_id)
+    txs = Transaction.query.filter(Transaction.id.in_(tx_ids)).all()
+    for tx in txs:
+        tx.category = category
+    db.session.commit()
+
+    return "ok"
+
+
+@bp.route("/set_reconciled", methods=['POST'])
+def set_reconciled():
+    reconciled = request.json.get('reconciled')
+    tx_ids = request.json.get('tx_ids')
+
+    txs = Transaction.query.filter(Transaction.id.in_(tx_ids)).all()
+    for tx in txs:
+        tx.reconciled = reconciled
+    db.session.commit()
+
+    return "ok"
 
 
 @bp.before_request

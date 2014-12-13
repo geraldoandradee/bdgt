@@ -1,11 +1,26 @@
 {% extends "base.html" %}
 
+{% macro render_category(category, level) -%}
+<li id="{{ category.id }}" class="cat-select">
+    <a href="#">
+      <span style="margin-left: {{ level * 16 }}px;">
+        {{ category.name }}
+      </span>
+    </a>
+  </li>
+  {% if category.subcategories | length > 0 %}
+    {% for subcategory in category.subcategories %}
+      {{ render_category(subcategory, level + 1) }}
+    {% endfor %}
+  {% endif %}
+{%- endmacro %}
+
 {% block content %}
 
 <div class="panel panel-default">
   <div class="panel-heading">
     <div class="row">
-      <div class="col-sm-8 col-md-8 col-lg-8">
+      <div class="col-sm-7 col-md-7 col-lg-7">
         <div class="input-group">
           <div class="input-group-btn">
             <button type="button" class="btn btn-default dropdown-toggle"
@@ -41,7 +56,7 @@
           </form>
         </div>
       </div>
-      <div class="col-sm-4 col-md-4 col-lg-4">
+      <div class="col-sm-5 col-md-5 col-lg-5">
         <div class="btn-group pull-right" role="group" aria-label="...">
           <div class="btn-group" role="group">
             <button id="tx-reconcile-btn" type="button"
@@ -50,14 +65,26 @@
               Reconcile <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
-              <li><a href="#">Reconciled</a></li>
-              <li><a href="#">Unreconciled</a></li>
+              <li class="reconcile-select">
+                <a href="#">Reconciled</a>
+              </li>
+              <li class="reconcile-select">
+                <a href="#">Unreconciled</a>
+              </li>
             </ul>
           </div>
-          <button id="tx-category-btn" type="button"
-                  class="btn btn-default disabled">
-            Category...
-          </button>
+          <div class="btn-group" role="group">
+            <button id="tx-category-btn" type="button"
+                    class="btn btn-default dropdown-toggle disabled"
+                    data-toggle="dropdown" aria-expanded="false">
+              Category <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              {% for category in categories %}
+                {{ render_category(category, 0) }}
+              {% endfor %}
+            </ul>
+          </div>
           <button id="tx-delete-btn" type="button"
                   class="btn btn-danger disabled">
             Delete...
@@ -164,6 +191,33 @@
   {% endif %}
 </nav>
 
+<!-- Category selection dialog -->
+
+<div class="modal fade dlg-category" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        TODO
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary">
+          Save changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
 
@@ -184,6 +238,14 @@
       $('#tx-category-btn').addClass('disabled');
       $('#tx-delete-btn').addClass('disabled');
     }
+  }
+
+  function get_selected_tx_ids() {
+    var selected_txs = new Array();
+    $('input[type=checkbox].tx-select:checked').each(function() {
+      selected_txs.push(parseInt(this.id));
+    });
+    return selected_txs;
   }
 
   $(document).ready(function() {
@@ -208,6 +270,40 @@
       }
       update_num_tx_selected();
       update_tx_buttons();
+    });
+
+    // Set category
+    $('li.cat-select').on('click', function() {
+      var cat_id = $(this).attr("id");
+      var selected_txs = get_selected_tx_ids();
+
+      $.ajax({
+        type : "POST",
+        url : "{{ url_for('transactions.set_category') }}",
+        data: JSON.stringify({'tx_ids': selected_txs,
+                              'cat_id': cat_id}),
+        contentType: 'application/json;charset=UTF-8',
+        success: function(result) {
+          location.reload(true);
+        }
+      });
+    });
+
+    // Set reconciled
+    $('li.reconcile-select').on('click', function() {
+      var reconciled = $(this).find('a').text().toLowerCase() == 'reconciled';
+      var selected_txs = get_selected_tx_ids();
+
+      $.ajax({
+        type : "POST",
+        url : "{{ url_for('transactions.set_reconciled') }}",
+        data: JSON.stringify({'tx_ids': selected_txs,
+                              'reconciled': reconciled}),
+        contentType: 'application/json;charset=UTF-8',
+        success: function(result) {
+          location.reload(true);
+        }
+      });
     });
   });
 </script>
