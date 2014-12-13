@@ -191,34 +191,6 @@
   {% endif %}
 </nav>
 
-<!-- Category selection dialog -->
-
-<div class="modal fade dlg-category" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">
-          <span aria-hidden="true">&times;</span>
-          <span class="sr-only">Close</span>
-        </button>
-        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
-      </div>
-      <div class="modal-body">
-        TODO
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">
-          Close
-        </button>
-        <button type="button" class="btn btn-primary">
-          Save changes
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
 {% endblock %}
 
 {% block js %}
@@ -302,6 +274,25 @@
         contentType: 'application/json;charset=UTF-8',
         success: function(result) {
           location.reload(true);
+        }
+      });
+    });
+
+    // Delete transactions
+    $('button#tx-delete-btn').on('click', function() {
+      bootbox.confirm("Are you sure?", function(confirmed) {
+        if (confirmed) {
+          var selected_txs = get_selected_tx_ids();
+
+          $.ajax({
+            type : "POST",
+            url : "{{ url_for('transactions.delete') }}",
+            data: JSON.stringify({'tx_ids': selected_txs}),
+            contentType: 'application/json;charset=UTF-8',
+            success: function(result) {
+              location.reload(true);
+            }
+          });
         }
       });
     });

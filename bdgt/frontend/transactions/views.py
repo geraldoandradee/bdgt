@@ -102,6 +102,18 @@ def set_reconciled():
     return "ok"
 
 
+@bp.route("/delete", methods=['POST'])
+def delete():
+    tx_ids = request.json.get('tx_ids')
+
+    txs = Transaction.query.filter(Transaction.id.in_(tx_ids)).all()
+    for tx in txs:
+        db.session.delete(tx)
+    db.session.commit()
+
+    return "ok"
+
+
 @bp.before_request
 def before_request():
     g.section = 'transactions'
