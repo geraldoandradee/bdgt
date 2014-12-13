@@ -1,80 +1,143 @@
 {% extends "base.html" %}
 
+{% macro render_category(category, level) -%}
+<li id="{{ category.id }}" class="cat-select">
+    <a href="#">
+      <span style="margin-left: {{ level * 16 }}px;">
+        {{ category.name }}
+      </span>
+    </a>
+  </li>
+  {% if category.subcategories | length > 0 %}
+    {% for subcategory in category.subcategories %}
+      {{ render_category(subcategory, level + 1) }}
+    {% endfor %}
+  {% endif %}
+{%- endmacro %}
+
 {% block content %}
 
-<div class="input-group">
-  <div class="input-group-btn">
-    <button type="button" class="btn btn-default dropdown-toggle"
-            data-toggle="dropdown" aria-expanded="false">
-      Filter <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" role="menu">
-      <li>
-        <a href="{{ url_for('transactions.list', q=q + ' amount:>0') }}">
-          Positive Amount
-        </a>
-      </li>
-      <li>
-        <a href="{{ url_for('transactions.list', q=q + ' amount:<0') }}">
-          Negative Amount
-        </a>
-      </li>
-      <li class="divider"></li>
-      <li>
-        <a href="{{ url_for('transactions.list', q=q + ' is:reconciled') }}">
-          Is Reconciled
-        </a>
-      </li>
-      <li>
-        <a href="{{ url_for('transactions.list', q=q + ' not:reconciled') }}">
-          Not Reconciled
-        </a>
-      </li>
-    </ul>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <div class="row">
+      <div class="col-sm-7 col-md-7 col-lg-7">
+        <div class="input-group">
+          <div class="input-group-btn">
+            <button type="button" class="btn btn-default dropdown-toggle"
+                    data-toggle="dropdown" aria-expanded="false">
+              Filter <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              <li>
+                <a href="{{ url_for('transactions.list', q=q + ' amount:>0') }}">
+                  Positive Amount
+                </a>
+              </li>
+              <li>
+                <a href="{{ url_for('transactions.list', q=q + ' amount:<0') }}">
+                  Negative Amount
+                </a>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a href="{{ url_for('transactions.list', q=q + ' is:reconciled') }}">
+                  Is Reconciled
+                </a>
+              </li>
+              <li>
+                <a href="{{ url_for('transactions.list', q=q + ' not:reconciled') }}">
+                  Not Reconciled
+                </a>
+              </li>
+            </ul>
+          </div>
+          <form action="{{ url_for('transactions.list') }}" method='GET'>
+            <input name="q" class="form-control" type="text" value='{{ q if q }}'>
+          </form>
+        </div>
+      </div>
+      <div class="col-sm-5 col-md-5 col-lg-5">
+        <div class="btn-group pull-right" role="group" aria-label="...">
+          <div class="btn-group" role="group">
+            <button id="tx-reconcile-btn" type="button"
+                    class="btn btn-default dropdown-toggle disabled"
+                    data-toggle="dropdown" aria-expanded="false">
+              Reconcile <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              <li class="reconcile-select">
+                <a href="#">Reconciled</a>
+              </li>
+              <li class="reconcile-select">
+                <a href="#">Unreconciled</a>
+              </li>
+            </ul>
+          </div>
+          <div class="btn-group" role="group">
+            <button id="tx-category-btn" type="button"
+                    class="btn btn-default dropdown-toggle disabled"
+                    data-toggle="dropdown" aria-expanded="false">
+              Category <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              {% for category in categories %}
+                {{ render_category(category, 0) }}
+              {% endfor %}
+            </ul>
+          </div>
+          <button id="tx-delete-btn" type="button"
+                  class="btn btn-danger disabled">
+            Delete...
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
-  <form action="{{ url_for('transactions.list') }}" method='GET'>
-    <input name="q" class="form-control" type="text" value='{{ q if q }}'>
-  </form>
-</div>
 
-<br>
+  <div class="panel-body">
+    {{ tx_pages.items | length }}/{{ tx_pages.total }} shown.
+    <span id="num-tx-selected">0</span> selected.
+  </div>
 
-<table id="accounts" class="table table-bordered table-condensed">
-    {% if tx_pages.items | length > 0 %}
-    <thead>
-      <tr>
-        <th>Account</th>
-        <th>Date</th>
-        <th>Description</th>
-        <th>Amount</th>
-        <th>R</th>
-        <th>Category</th>
-      </tr>
-    </thead>
-    <tbody>
-        {% for tx in tx_pages.items %}
+  <table id="accounts" class="table table-bordered table-condensed">
+      {% if tx_pages.items | length > 0 %}
+      <thead>
         <tr>
-          <td>{{ tx.account.name }}</td>
-          <td>{{ tx.date }}</td>
-          <td>{{ tx.description }}</td>
-          {% if tx.amount > 0 %}
-            <td style="text-align: right; color: green;">
-              {{ '%0.2f' | format(tx.amount) }}
-            </td>
-          {% else %}
-            <td style="text-align: right; color: red;">
-              {{ '%0.2f' | format(tx.amount) }}
-            </td>
-          {% endif %}
-          <td>{{ 'Y' if tx.reconciled else 'N' }}</td>
-          <td>{{ tx.category }}</td>
+          <th><input id="tx-select-all" type="checkbox"></th>
+          <th>Account</th>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Amount</th>
+          <th>R</th>
+          <th>Category</th>
         </tr>
-        {% endfor %}
-    </tbody>
-    {% else %}
-      <p>There are no transactions</p>
-    {% endif %}
-</table>
+      </thead>
+      <tbody>
+          {% for tx in tx_pages.items %}
+          <tr>
+            <td><input id="{{ tx.id }}" class="tx-select" type="checkbox"></td>
+            <td>{{ tx.account.name }}</td>
+            <td>{{ tx.date }}</td>
+            <td>{{ tx.description }}</td>
+            {% if tx.amount > 0 %}
+              <td style="text-align: right; color: green;">
+                {{ '%0.2f' | format(tx.amount) }}
+              </td>
+            {% else %}
+              <td style="text-align: right; color: red;">
+                {{ '%0.2f' | format(tx.amount) }}
+              </td>
+            {% endif %}
+            <td>{{ 'Y' if tx.reconciled else 'N' }}</td>
+            <td>{{ tx.category }}</td>
+          </tr>
+          {% endfor %}
+      </tbody>
+      {% else %}
+        <p>There are no transactions</p>
+      {% endif %}
+  </table>
+</div>
 
 <nav class="text-center">
   {% if tx_pages.total %}
@@ -128,8 +191,111 @@
   {% endif %}
 </nav>
 
-
 {% endblock %}
 
 {% block js %}
+<script>
+  function update_num_tx_selected() {
+    $('span#num-tx-selected').text(
+        $('input[type=checkbox].tx-select:checked').size());
+  }
+
+  function update_tx_buttons() {
+    if ($('input[type=checkbox].tx-select:checked').length > 0) {
+      $('#tx-reconcile-btn').removeClass('disabled');
+      $('#tx-category-btn').removeClass('disabled');
+      $('#tx-delete-btn').removeClass('disabled');
+    } else {
+      $('#tx-reconcile-btn').addClass('disabled');
+      $('#tx-category-btn').addClass('disabled');
+      $('#tx-delete-btn').addClass('disabled');
+    }
+  }
+
+  function get_selected_tx_ids() {
+    var selected_txs = new Array();
+    $('input[type=checkbox].tx-select:checked').each(function() {
+      selected_txs.push(parseInt(this.id));
+    });
+    return selected_txs;
+  }
+
+  $(document).ready(function() {
+    // select all
+    $('input[type=checkbox]#tx-select-all').on('click', function() {
+      if ($(this).is(":checked")) {
+        $('input[type=checkbox]').prop('checked', true);
+      } else {
+        $('input[type=checkbox]').prop('checked', false);
+      }
+      update_num_tx_selected();
+      update_tx_buttons();
+    });
+
+    // select individual
+    $('input[type=checkbox].tx-select').on('click', function() {
+      if ($('input[type=checkbox].tx-select:checked').size() ==
+          $('input[type=checkbox].tx-select').length) {
+        $('input[type=checkbox]#tx-select-all').prop('checked', true);
+      } else {
+        $('input[type=checkbox]#tx-select-all').prop('checked', false);
+      }
+      update_num_tx_selected();
+      update_tx_buttons();
+    });
+
+    // Set category
+    $('li.cat-select').on('click', function() {
+      var cat_id = $(this).attr("id");
+      var selected_txs = get_selected_tx_ids();
+
+      $.ajax({
+        type : "POST",
+        url : "{{ url_for('transactions.set_category') }}",
+        data: JSON.stringify({'tx_ids': selected_txs,
+                              'cat_id': cat_id}),
+        contentType: 'application/json;charset=UTF-8',
+        success: function(result) {
+          location.reload(true);
+        }
+      });
+    });
+
+    // Set reconciled
+    $('li.reconcile-select').on('click', function() {
+      var reconciled = $(this).find('a').text().toLowerCase() == 'reconciled';
+      var selected_txs = get_selected_tx_ids();
+
+      $.ajax({
+        type : "POST",
+        url : "{{ url_for('transactions.set_reconciled') }}",
+        data: JSON.stringify({'tx_ids': selected_txs,
+                              'reconciled': reconciled}),
+        contentType: 'application/json;charset=UTF-8',
+        success: function(result) {
+          location.reload(true);
+        }
+      });
+    });
+
+    // Delete transactions
+    $('button#tx-delete-btn').on('click', function() {
+      bootbox.confirm("Are you sure?", function(confirmed) {
+        if (confirmed) {
+          var selected_txs = get_selected_tx_ids();
+
+          $.ajax({
+            type : "POST",
+            url : "{{ url_for('transactions.delete') }}",
+            data: JSON.stringify({'tx_ids': selected_txs}),
+            contentType: 'application/json;charset=UTF-8',
+            success: function(result) {
+              location.reload(true);
+            }
+          });
+        }
+      });
+    });
+  });
+</script>
 {% endblock %}
