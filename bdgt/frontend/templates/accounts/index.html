@@ -2,33 +2,38 @@
 
 {% block content %}
 
-<table id="accounts" class="table table-bordered table-hover">
-    {% if accounts | length > 0 %}
-    <thead>
-      <tr><th>Name</th><th>Number</th></tr>
-    </thead>
-    <tbody>
-        {% for account in accounts %}
-        <tr>
-          <td>
-            <a href="{{ url_for('transactions.list',
-                                account=account.name) }}">
-              {{ account.name }}
-            </a>
-          </td>
-          <td>
-            <a href="{{ url_for('transactions.list',
-                                account=account.name) }}">
-              {{ account.number }}
-            </a>
-          </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-    {% else %}
-      <p>There are no accounts</p>
-    {% endif %}
-</table>
+<div class="panel panel-default">
+  <div class="panel-heading">
+  </div>
+
+  <table id="accounts" class="table table-bordered table-hover">
+      {% if accounts | length > 0 %}
+      <thead>
+        <tr><th>Name</th><th>Number</th></tr>
+      </thead>
+      <tbody>
+          {% for account in accounts %}
+          <tr>
+            <td>
+              <a href="{{ url_for('transactions.list',
+                                  account=account.name) }}">
+                {{ account.name }}
+              </a>
+            </td>
+            <td>
+              <a href="{{ url_for('transactions.list',
+                                  account=account.name) }}">
+                {{ account.number }}
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+      </tbody>
+      {% else %}
+        <p>There are no accounts</p>
+      {% endif %}
+  </table>
+</div>
 
 {% endblock %}
 

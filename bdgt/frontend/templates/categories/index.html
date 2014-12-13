@@ -28,25 +28,27 @@
 {%- endmacro %}
 
 {% block content %}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <a class="btn btn-primary"
+         href="{{ url_for('categories.create_or_update') }}">
+        New Category
+      </a>
+    </div>
 
-<a class="btn btn-primary" href="{{ url_for('categories.create_or_update') }}">
-  New Category
-</a>
+    <table id="categories" class="table table-condensed">
+      {% if categories | length > 0 %}
+      <tbody>
+        {% for category in categories %}
+          {{ render_category(category, 0) }}
+        {% endfor %}
+      </tbody>
+      {% else %}
+        <p>No categories</p>
+      {% endif %}
+    </table>
 
-<br>
-<br>
-
-<table id="categories" class="table table-condensed">
-  {% if categories | length > 0 %}
-  <tbody>
-    {% for category in categories %}
-      {{ render_category(category, 0) }}
-    {% endfor %}
-  </tbody>
-  {% else %}
-    <p>No categories</p>
-  {% endif %}
-</table>
+  </div>
 {% endblock %}
 
 {% block js %}
