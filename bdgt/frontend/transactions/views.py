@@ -67,7 +67,7 @@ def list():
                 query = query.filter(Transaction.description.contains(f))
 
     page = int(request.args.get('page', 1))
-    tx_pages = query.paginate(page, 20)
+    tx_pages = query.order_by(Transaction.date.desc()).paginate(page, 20)
 
     root_categories = Category.query.filter_by(parent_id=None).all()
 
