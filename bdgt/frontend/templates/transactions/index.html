@@ -129,7 +129,7 @@
               </td>
             {% endif %}
             <td>{{ 'Y' if tx.reconciled else 'N' }}</td>
-            <td>{{ tx.category }}</td>
+            <td>{{ tx.category if tx.category }}</td>
           </tr>
           {% endfor %}
       </tbody>
