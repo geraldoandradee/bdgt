@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="panel panel-default">
+  <div class="panel-heading">Reconcile</div>
+  <table id="accounts" class="table table-bordered table-hover">
+      {% if txs | length > 0 %}
+      <thead>
+        <tr>
+          <th>Account</th>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Amount</th>
+          <th>Category</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for tx in txs %}
+            <tr>
+              <td>{{ tx.account }}</td>
+              <td>{{ tx.date }}</td>
+              <td>{{ tx.description }}</td>
+              <td>{{ tx.amount }}</td>
+              <td>{{ tx.category }}</td>
+            </tr>
+          {% endfor %}
+      </tbody>
+      {% else %}
+        <p>There are no imported transactions</p>
+      {% endif %}
+  </table>
+</div>
+
+{% endblock %}
+
+{% block js %}
+{% endblock %}
